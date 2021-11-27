@@ -7,9 +7,7 @@ function  show_mc_jester_plots()
 
 
     %% set parameters
-    maxepoch = 60;
-    dir = "./fig/"+string(maxepoch)+"epoch";
-    mkdir  (dir);
+    maxepoch = 36;
     N = 100;
     d = 24983;   
     r = 5;
@@ -117,8 +115,8 @@ function  show_mc_jester_plots()
     
     % Initialize
     Uinit = problem.M.rand();     
-% dir = "./fig";
-for stepsize = 0.01:0.01:0.05    
+dir = "./fig";
+for stepsize = 3.5:0.1:4.5    
     % R-SD
 %     clear options;
 %     options.maxiter = maxepoch;
@@ -155,7 +153,7 @@ for stepsize = 0.01:0.01:0.05
     options.verbosity = 1;
     options.batchsize = batchsize;
     options.update_type='rngd';
-    options.maxepoch = maxepoch / (1 + 2 * inner_repeat);
+    options.maxepoch = 36 / (1 + 2 * inner_repeat);
     options.tolgradnorm = tolgradnorm;         
     options.rngd_type = 1;
     options.stepsize_type = 'fix';
@@ -241,11 +239,12 @@ for stepsize = 0.01:0.01:0.05
 
     % Train MSE versus #grads/N    
     figure;
-    set(gcf,'visible','off');
+    set(gcf,'visible','off')
+
 %     semilogy(num_grads_sd, [infos_sd.cost] * 2 * N / data_ls.nentries,'-','LineWidth',2,'Color', [255, 128, 0]/255);        hold on;
 %     semilogy(num_grads_cg, [infos_cg.cost] * 2 * N / data_ls.nentries,'-','LineWidth',2,'Color', [76, 153, 0]/255);         hold on;
     semilogy(num_grads_sgd, [infos_sgd.cost]  * 2 * N / data_ls.nentries,'-','LineWidth',2,'Color', [255,0,255]/255);       hold on; 
-    semilogy(num_grads_rngd, [infos_rngd.cost] * 2 * N / data_ls.nentries, '-', 'LineWidth',2,'Color', [255, 128, 0]/255);    hold on;
+    semilogy(num_grads_rngd, [infos_rngd.cost] * 2 * N / data_ls.nentries, '-', 'LineWidth',2,'Color', [255, 0, 255]/255);    hold on;
     semilogy(num_grads_svrg, [infos_svrg.cost] * 2 * N / data_ls.nentries, '-', 'LineWidth',2,'Color', [255, 0, 0]/255);    hold on;
 %     semilogy(num_grads_srg, [infos_srg.cost] * 2 * N / data_ls.nentries, '-', 'LineWidth',2,'Color', [0, 0, 255]/255);      hold on;
 %     semilogy(num_grads_srg_plus, [infos_srg_plus.cost] * 2 * N / data_ls.nentries, '-.', 'LineWidth',2,'Color', [0, 0, 255]/255);         hold on;
@@ -253,44 +252,22 @@ for stepsize = 0.01:0.01:0.05
     ax1 = gca;
     set(ax1,'FontSize',fs);
     xlabel(ax1,'#grad/N','FontName','Arial','FontSize',fs,'FontWeight','bold');
-    ylabel(ax1,'Means square error on train set ','FontName','Arial','FontSize',fs,'FontWeight','bold');
+    ylabel(ax1,'Means square error on train set \Gamma','FontName','Arial','FontSize',fs,'FontWeight','bold');
 %     legend('R-SD', 'R-CG', 'R-SGD', 'R-SVRG', 'R-SRG', 'R-SRG+'); 
-%     legend('R-SNGD', 'R-SVRG', 'R-SRG', 'R-SRG+'); 
-%     legend('R-SNGD', 'R-SVRG'); 
-    legend('R-SGD','R-SNGD', 'R-SVRG');
-    filename = "stepsize = "+string(stepsize)+" Means square error on test set  per grad maxepoch = "+string(maxepoch);
-    saveas(gcf, dir+'/'+filename+'.png','png');
-
-        % Train MSE versus #grads/N    
-    figure;
-    set(gcf,'visible','off');
-%     semilogy(num_grads_sd, [infos_sd.cost] * 2 * N / data_ls.nentries,'-','LineWidth',2,'Color', [255, 128, 0]/255);        hold on;
-%     semilogy(num_grads_cg, [infos_cg.cost] * 2 * N / data_ls.nentries,'-','LineWidth',2,'Color', [76, 153, 0]/255);         hold on;
-    semilogy(num_grads_sgd, [infos_sgd.gradnorm]  * 2 * N / data_ls.nentries,'-','LineWidth',2,'Color', [255,0,255]/255);       hold on; 
-    semilogy(num_grads_rngd, [infos_rngd.gradnorm] * 2 * N / data_ls.nentries, '-', 'LineWidth',2,'Color', [255, 128, 0]/255);    hold on;
-    semilogy(num_grads_svrg, [infos_svrg.gradnorm] * 2 * N / data_ls.nentries, '-', 'LineWidth',2,'Color', [255, 0, 0]/255);    hold on;
-%     semilogy(num_grads_srg, [infos_srg.cost] * 2 * N / data_ls.nentries, '-', 'LineWidth',2,'Color', [0, 0, 255]/255);      hold on;
-%     semilogy(num_grads_srg_plus, [infos_srg_plus.cost] * 2 * N / data_ls.nentries, '-.', 'LineWidth',2,'Color', [0, 0, 255]/255);         hold on;
-    hold off;
-    ax1 = gca;
-    set(ax1,'FontSize',fs);
-    xlabel(ax1,'#grad/N','FontName','Arial','FontSize',fs,'FontWeight','bold');
-    ylabel(ax1,'Gradient norm on train set ','FontName','Arial','FontSize',fs,'FontWeight','bold');
-%     legend('R-SD', 'R-CG', 'R-SGD', 'R-SVRG', 'R-SRG', 'R-SRG+'); 
-%     legend('R-SNGD', 'R-SVRG', 'R-SRG', 'R-SRG+'); 
-%     legend('R-SNGD', 'R-SVRG'); 
-    legend('R-SGD','R-SNGD', 'R-SVRG');
-    filename = "stepsize = "+string(stepsize)+" Gradient norm on test set  per grad maxepoch = "+string(maxepoch);
+    legend('R-SGD','R-RNGD', 'R-SVRG', 'R-SRG', 'R-SRG+'); 
+%     legend('R-RNGD', 'R-SVRG'); 
+    filename = "stepsize = %f Means square error on test set Gamma per grad when stepsize = "+string(stepsize);
     saveas(gcf, dir+'/'+filename+'.png','png');
 
     % Train MSE versus #grads/N    
     fs = 20;
     figure;
-    set(gcf,'visible','off');
+    set(gcf,'visible','off')
+
 %     semilogy(num_grads_sd, [infos_sd.cost_test] * 2 * N / data_test.nentries,'-','LineWidth',2,'Color', [255, 128, 0]/255);     hold on;
 %     semilogy(num_grads_cg, [infos_cg.cost_test] * 2 * N / data_test.nentries,'-','LineWidth',2,'Color', [76, 153, 0]/255);      hold on;
     semilogy(num_grads_sgd, [infos_sgd.cost_test]  * 2 * N / data_test.nentries,'-','LineWidth',2,'Color', [255,0,255]/255);    hold on; 
-    semilogy(num_grads_rngd, [infos_rngd.cost_test]  * 2 * N / data_test.nentries,'-','LineWidth',2,'Color', [255,128,0]/255);    hold on;    
+    semilogy(num_grads_rngd, [infos_rngd.cost_test]  * 2 * N / data_test.nentries,'-','LineWidth',2,'Color', [255,0,255]/255);    hold on;    
     semilogy(num_grads_svrg, [infos_svrg.cost_test] * 2 * N / data_test.nentries, '-', 'LineWidth',2,'Color', [255, 0, 0]/255); hold on;
 %     semilogy(num_grads_srg, [infos_srg.cost_test] * 2 * N / data_test.nentries, '-', 'LineWidth',2,'Color', [0, 0, 255]/255);   hold on;
 %     semilogy(num_grads_srg_plus, [infos_srg_plus.cost_test] * 2 * N / data_test.nentries, '-.', 'LineWidth',2,'Color', [0, 0, 255]/255);         hold on;
@@ -298,35 +275,34 @@ for stepsize = 0.01:0.01:0.05
     ax1 = gca;
     set(ax1,'FontSize',fs);
     xlabel(ax1,'#grad/N','FontName','Arial','FontSize',fs,'FontWeight','bold');
-    ylabel(ax1,'Means square error on test set ','FontName','Arial','FontSize',fs,'FontWeight','bold');
+    ylabel(ax1,'Means square error on test set \Phi','FontName','Arial','FontSize',fs,'FontWeight','bold');
 %     legend('R-SD', 'R-CG', 'R-SGD', 'R-SVRG', 'R-SRG', 'R-SRG+');     
-%     legend('R-SNGD', 'R-SVRG', 'R-SRG', 'R-SRG+');   
-%     legend('R-SNGD', 'R-SVRG');       
-    legend('R-SGD','R-SNGD', 'R-SVRG');
-    filename = "stepsize = "+string(stepsize)+" Means square error on test set  per grad maxepoch = "+string(maxepoch);
+    legend('R-SGD','R-RNGD', 'R-SVRG', 'R-SRG', 'R-SRG+');   
+%     legend('R-RNGD', 'R-SVRG');   
+    filename = "stepsize = %f Means square error on test set Phi per grad = "+string(stepsize);
     saveas(gcf, dir+'/'+filename+'.png','png');
-    
+
     % Train MSE versus #grads/N    
     fs = 20;
     figure;
-    set(gcf,'visible','off');
+    set(gcf,'visible','off')
 %     semilogy([infos_sd.time], [infos_sd.cost_test] * 2 * N / data_test.nentries,'-','LineWidth',2,'Color', [255, 128, 0]/255);      hold on;
 %     semilogy([infos_cg.time], [infos_cg.cost_test] * 2 * N / data_test.nentries,'-','LineWidth',2,'Color', [76, 153, 0]/255);       hold on;
     semilogy([infos_sgd.time], [infos_sgd.cost_test]  * 2 * N / data_test.nentries,'-','LineWidth',2,'Color', [255,0,255]/255);     hold on; 
-    semilogy([infos_rngd.time], [infos_rngd.cost_test]  * 2 * N / data_test.nentries,'-','LineWidth',2,'Color', [255,128,0]/255);     hold on;    
+    semilogy([infos_rngd.time], [infos_rngd.cost_test]  * 2 * N / data_test.nentries,'-','LineWidth',2,'Color', [255,0,255]/255);     hold on;    
     semilogy([infos_svrg.time], [infos_svrg.cost_test] * 2 * N / data_test.nentries, '-', 'LineWidth',2,'Color', [255, 0, 0]/255); hold on;
-%     semilogy([infos_srg.time], [infos_srg.cost_test] * 2 * N / data_test.nentries, '-', 'LineWidth',2,'Color', [0, 0, 255]/255);   hold on;
+%     semilogy([infos_srg.time], [infos_srg.cost_test] * 2 * N / data_test.nentries, '-', 'LineWidth',2,'Color',  0, 0, 255]/255);   hold on;
 %     semilogy([infos_srg_plus.time], [infos_srg_plus.cost_test] * 2 * N / data_test.nentries, '-.', 'LineWidth',2,'Color', [0, 0, 255]/255);         hold on;
     hold off;
     ax1 = gca;
     set(ax1,'FontSize',fs);
     xlabel(ax1,'Time [sec]','FontName','Arial','FontSize',fs,'FontWeight','bold');
-    ylabel(ax1,'Means square error on test set ','FontName','Arial','FontSize',fs,'FontWeight','bold');
+    ylabel(ax1,'Means square error on test set \Phi','FontName','Arial','FontSize',fs,'FontWeight','bold');
 %     legend('R-SD', 'R-CG', 'R-SGD', 'R-SVRG', 'R-SRG', 'R-SRG+');
-%     legend('R-SNGD', 'R-SVRG', 'R-SRG', 'R-SRG+');
-    legend('R-SGD','R-SNGD', 'R-SVRG');
-    filename = "stepsize = "+string(stepsize)+" Means square error on test set  per time maxepoch = "+string(maxepoch);
+    legend('R-SGD','R-RNGD', 'R-SVRG', 'R-SRG', 'R-SRG+');
+    filename = "stepsize = %f Means square error on test set Phi per time"+string(stepsize);
     saveas(gcf, dir+'/'+filename+'.png','png');
+%     legend('R-RNGD', 'R-SVRG');
 end
     function [samples, samples_test, samples_valid, values, indicator, values_test, indicator_test, data_ls, data_test, data_valid] = generate_mc_data_jester()
 
